@@ -3,9 +3,8 @@
 #include <iostream>
 #include <WS2tcpip.h>
 
-ClientHandler::ClientHandler(SOCKET sock, ChatServer* server)
-    : clientSocket(sock), server(server) {
-}
+ClientHandler::ClientHandler(SOCKET sock, ChatServer* server, const std::string& name)
+    : clientSocket(sock), server(server), clientName(name) {}
 
 ClientHandler::~ClientHandler() {
     closesocket(clientSocket);
@@ -14,8 +13,8 @@ ClientHandler::~ClientHandler() {
 void ClientHandler::process() {
     std::string msg;
     while (receiveMessage(msg)) {
-        std::cout << "Received: " << msg << std::endl;
-        
+        std::string formattedMsg = clientName + ": " + msg; // 클라이언트 이름을 포함하여 메시지 형식화
+        std::cout << "Received: " << formattedMsg << std::endl;
     }
 }
 

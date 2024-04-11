@@ -62,13 +62,22 @@ void ChatServer::start() {
             continue;
         }
 
+        char nameBuf[1024];
+        int bytesReceived = recv(clientSocket, nameBuf, 1024, 0);
+        if (bytesReceived <= 0) {
+            std::cerr << "클라이언트 이름 수신 실패" << std::endl;
+            closesocket(clientSocket);
+            continue;
+        }
+
    
-        ClientHandler* handler = new ClientHandler(clientSocket, this);
+        std::string clientName(nameBuf, bytesReceived);
+        ClientHandler* handler = new ClientHandler(clientSocket, this, clientName);
         std::thread clientThread([handler]() {
             handler->process();
             delete handler;
             });
-        clientThread.detach(); 
+        clientThread.detach();
     }
 
 }
